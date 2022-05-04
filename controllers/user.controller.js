@@ -25,29 +25,23 @@ exports.register = async (req, res) => {
 
   if (errors.length) return res.status(422).send({ msg: errors });
 
-  user
-    .findOne({ where: { email } })
-    .then((found) => {
-      return (
-        found &&
-        res.status(422).send({ msg: "User with such mail already exists" })
-      );
-    })
-    .catch((err) => {
-      return res.status(422).send({ msg: err });
-    });
+  try {
+    const found = await user.findOne({ where: { email } });
+    if (found)
+      return res
+        .status(422)
+        .send({ msg: "User with such email already exists" });
 
-  body.password = bcrypt.hashSync(password, 10);
-  user
-    .create(body)
-    .then((created) => {
+    body.password = bcrypt.hashSync(password, 10);
+    const created = await user.create(body);
+    if (created) {
       const token = jwt.sign({ id: created.id, email }, process.env.TOKEN_KEY);
       return res.send({
         email,
         token,
       });
-    })
-    .catch((err) => {
-      return res.status(422).send({ msg: err });
-    });
+    }
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
 };
