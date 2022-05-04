@@ -22,13 +22,22 @@ exports.register = async (req, res) => {
     errors.push(
       "The name must be composed only of letters and be at least 3 letters long"
     );
+
   if (errors.length) return res.status(422).send({ msg: errors });
-  const existed = await user.findOne({ where: { email } });
-  if (existed)
-    return res.status(422).send({ msg: "User with such mail already exists" });
 
-  body.password = bcrypt.hashSync(email, process.env.HASH_LEVEL);
+  user
+    .findOne({ where: { email } })
+    .then((found) => {
+      return (
+        found &&
+        res.status(422).send({ msg: "User with such mail already exists" })
+      );
+    })
+    .catch((err) => {
+      return res.status(422).send({ msg: err });
+    });
 
+  body.password = bcrypt.hashSync(password, 10);
   user
     .create(body)
     .then((created) => {
