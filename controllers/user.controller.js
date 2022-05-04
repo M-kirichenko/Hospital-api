@@ -10,39 +10,34 @@ const {
 
 exports.register = async (req, res) => {
   const { body } = req;
-  if (!body["name"] || !body["email"] || !body["password"]) {
+  const { name, email, password } = req.body;
+  if (!name || !email || !password) {
     res.status(422);
     res.send({ msg: "All inputs required" });
   } else {
     const errors = [];
     if (!validEmail(body["email"])) errors.push("Invalid email");
-    if (!validPassword(body["password"]))
-      errors.push(
-        "Password must contain at least 6 chars, including one uppercase letter, number and special symbol"
-      );
+    if (!validPassword(body["password"])) errors.push("Invalid password");
     if (!validName(body["name"]))
       errors.push(
         "The name must be composed only of letters and be at least 3 letters long"
       );
-    if (!errors.length) {
-      const existed = await user.findOne({ where: { email: body.email } });
-      console.log(existed);
-      if (!existed) {
-        jwt.sign(body, "secretKey", async (err, token) => {
-          body.password = await bcrypt.hash(body.password, 10);
-          const { email } = await user.create(body);
-          res.send({
-            email,
-            token,
-          });
-        });
-      } else {
-        res.status(422);
-        res.send({ msg: "User with such mail already exists" });
-      }
-    } else {
+    if (errors.length) {
       res.status(422);
       res.send({ msg: errors });
     }
+    const existed = await user.findOne({ where: { email: body.email } });
+    if (existed) {
+      res.status(422);
+      res.send({ msg: "User with such mail already exists" });
+    }
+    jwt.sign(body, process.env.TOKEN_KEY, async (err, token) => {
+      body.password = await bcrypt.hash(body.password, 10);
+      const { email } = await user.create(body);
+      res.send({
+        email,
+        token,
+      });
+    });
   }
 };
