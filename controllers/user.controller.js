@@ -12,7 +12,7 @@ exports.register = async (req, res) => {
   const { body } = req;
   const { name, email, password } = req.body;
   if (!name || !email || !password)
-    res.status(422).send({ msg: "All inputs required" });
+    return res.status(422).send({ msg: "All inputs required" });
 
   const errors = [];
 
@@ -23,11 +23,11 @@ exports.register = async (req, res) => {
       "The name must be composed only of letters and be at least 3 letters long"
     );
   if (errors.length) res.status(422).send({ msg: errors });
-  const existed = await user.findOne({ where: { email: body.email } });
+  const existed = await user.findOne({ where: { email } });
   if (existed)
-    res.status(422).send({ msg: "User with such mail already exists" });
+    return res.status(422).send({ msg: "User with such mail already exists" });
 
-  body.password = bcrypt.hashSync(body.password, 10);
+  body.password = bcrypt.hashSync(email, process.env.HASH_LEVEL);
 
   user
     .create(body)
