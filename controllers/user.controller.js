@@ -22,7 +22,7 @@ exports.register = async (req, res) => {
     errors.push(
       "The name must be composed only of letters and be at least 3 letters long"
     );
-  if (errors.length) res.status(422).send({ msg: errors });
+  if (errors.length) return res.status(422).send({ msg: errors });
   const existed = await user.findOne({ where: { email } });
   if (existed)
     return res.status(422).send({ msg: "User with such mail already exists" });
