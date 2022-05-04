@@ -33,12 +33,12 @@ exports.register = async (req, res) => {
     .create(body)
     .then((created) => {
       const token = jwt.sign({ id: created.id, email }, process.env.TOKEN_KEY);
-      res.send({
+      return res.send({
         email,
         token,
       });
     })
     .catch((err) => {
-      res.status(422).send({ msg: err });
+      return res.status(422).send({ msg: err });
     });
 };
