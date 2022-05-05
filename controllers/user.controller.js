@@ -8,6 +8,8 @@ const {
   validName,
 } = require("../helpers/validator");
 
+const { genToken } = require("../helpers/commonFunc");
+
 exports.register = async (req, res) => {
   const { body } = req;
   const { name, email, password } = req.body;
@@ -35,11 +37,8 @@ exports.register = async (req, res) => {
     body.password = bcrypt.hashSync(password, 10);
     const created = await user.create(body);
     if (created) {
-      const token = jwt.sign({ id: created.id, email }, process.env.TOKEN_KEY);
-      return res.send({
-        email,
-        token,
-      });
+      const token = genToken(jwt, created.id, email);
+      return res.send({ email, token });
     }
   } catch (err) {
     return res.status(422).send({ msg: err.message });
@@ -60,11 +59,7 @@ exports.login = async (req, res) => {
     if (foundUser) {
       const passwordsMatch = await bcrypt.compare(password, foundUser.password);
       if (passwordsMatch) {
-        const token = jwt.sign(
-          { id: foundUser.id, email },
-          process.env.TOKEN_KEY,
-          { expiresIn: "2h" }
-        );
+        const token = genToken(jwt, foundUser.id, email, "2h");
         const userWithToken = {
           email,
           token,
