@@ -36,7 +36,8 @@ exports.register = async (req, res) => {
     body.password = bcrypt.hashSync(password, 10);
     const created = await user.create(body);
     if (created) {
-      const tokenParams = { id: created.id, email };
+      const { id, email } = created;
+      const tokenParams = { id, email, expiresIn: "2h" };
       const tokenData = genToken(tokenParams);
       return res.send(tokenData);
     }
@@ -59,7 +60,8 @@ exports.login = async (req, res) => {
     if (foundUser) {
       const passwordsMatch = await bcrypt.compare(password, foundUser.password);
       if (passwordsMatch) {
-        const tokenParams = { id: foundUser.id, email, expiresIn: "2h" };
+        const { id, name, email } = foundUser;
+        const tokenParams = { id, name, email, expiresIn: "2h" };
         const tokenData = genToken(tokenParams);
         return res.send(tokenData);
       }
