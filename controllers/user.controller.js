@@ -45,3 +45,35 @@ exports.register = async (req, res) => {
     return res.status(422).send({ msg: err.message });
   }
 };
+
+exports.login = async (req, res) => {
+  const { body } = req;
+  const { email, password } = body;
+  if (!email || !password)
+    return res.status(422).send({ msg: "All inputs required" });
+
+  try {
+    const foundUser = await user.findOne({
+      where: { email },
+    });
+
+    if (foundUser) {
+      const passwordsMatch = await bcrypt.compare(password, foundUser.password);
+      if (passwordsMatch) {
+        const token = jwt.sign(
+          { id: foundUser.id, email },
+          process.env.TOKEN_KEY,
+          { expiresIn: "2h" }
+        );
+        const userWithToken = {
+          email,
+          token,
+        };
+        return res.send(userWithToken);
+      }
+    }
+    return res.status(401).send({ msg: "Invalid Credentials" });
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};
