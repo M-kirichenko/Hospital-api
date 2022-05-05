@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 const db = require("../models");
 const user = db.user;
 const {
@@ -37,8 +36,9 @@ exports.register = async (req, res) => {
     body.password = bcrypt.hashSync(password, 10);
     const created = await user.create(body);
     if (created) {
-      const token = genToken(jwt, created.id, email);
-      return res.send({ email, token });
+      const tokenParams = { id: created.id, email };
+      const tokenData = genToken(tokenParams);
+      return res.send(tokenData);
     }
   } catch (err) {
     return res.status(422).send({ msg: err.message });
@@ -59,12 +59,9 @@ exports.login = async (req, res) => {
     if (foundUser) {
       const passwordsMatch = await bcrypt.compare(password, foundUser.password);
       if (passwordsMatch) {
-        const token = genToken(jwt, foundUser.id, email, "2h");
-        const userWithToken = {
-          email,
-          token,
-        };
-        return res.send(userWithToken);
+        const tokenParams = { id: foundUser.id, email, expiresIn: "2h" };
+        const tokenData = genToken(tokenParams);
+        return res.send(tokenData);
       }
     }
     return res.status(401).send({ msg: "Invalid Credentials" });

@@ -1,10 +1,11 @@
-const genToken = (jwtRef, id, email, expiresIn = false) => {
-  const token = jwtRef.sign(
+const genToken = ({ id, email, expiresIn = false }) => {
+  const jwt = require("jsonwebtoken");
+  const token = jwt.sign(
     { id, email },
     process.env.TOKEN_KEY,
     expiresIn && { expiresIn }
   );
-  return token;
+  return { email, token };
 };
 
 module.exports = { genToken };
