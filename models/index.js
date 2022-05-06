@@ -16,6 +16,7 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 db.user = require("./user.model.js")(sequelize, Sequelize);
+db.doctor = require("./doctor.model.js")(sequelize, Sequelize);
 db.visit = require("./visit.model.js")(sequelize, Sequelize);
 
 db.user.hasMany(db.visit);
