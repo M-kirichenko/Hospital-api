@@ -9,8 +9,7 @@ module.exports = (app) => {
   router.post("/user/register", register);
   router.post("/user/login", login);
 
-  router.get("/doctors/all", auth, all);
-  router.post("/doctors/add", auth, add);
+  router.get("/doctors", auth, all).post("/doctors", auth, add);
 
   app.use("/api/hospital", router);
 };
