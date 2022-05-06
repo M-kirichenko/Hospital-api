@@ -37,9 +37,8 @@ exports.register = async (req, res) => {
     const created = await user.create(body);
     if (created) {
       const { id, email } = created;
-      const tokenParams = { id, email, expiresIn: "2h" };
-      const tokenData = genToken(tokenParams);
-      return res.send(tokenData);
+      const token = genToken({ id, email });
+      return res.send({ email, token });
     }
   } catch (err) {
     return res.status(422).send({ msg: err.message });
@@ -61,9 +60,8 @@ exports.login = async (req, res) => {
       const passwordsMatch = await bcrypt.compare(password, foundUser.password);
       if (passwordsMatch) {
         const { id, name, email } = foundUser;
-        const tokenParams = { id, name, email, expiresIn: "2h" };
-        const tokenData = genToken(tokenParams);
-        return res.send(tokenData);
+        const token = genToken({ id, email });
+        return res.send({ name, email, token });
       }
     }
     return res.status(401).send({ msg: "Invalid Credentials" });
