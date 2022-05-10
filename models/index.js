@@ -19,7 +19,8 @@ db.user = require("./user.model.js")(sequelize, Sequelize);
 db.doctor = require("./doctor.model.js")(sequelize, Sequelize);
 db.visit = require("./visit.model.js")(sequelize, Sequelize);
 
-db.user.hasMany(db.visit);
-db.visit.belongsTo(db.user);
+db.visit.belongsTo(db.user, {
+  foreignKey: "user_id",
+});
 
 module.exports = db;
