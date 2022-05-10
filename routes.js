@@ -9,7 +9,9 @@ module.exports = (app) => {
   router.post("/user/register", register);
   router.post("/user/login", login);
 
-  router.route("/doctors").get(auth, all).post(auth, add);
+  router.route("/doctors").get(auth, getAllDoctors).post(auth, addDoctor);
+
+  router.route("/user/visits").post(auth, make).get(auth, allVisits);
 
   app.use("/api/hospital", router);
 };
