@@ -5,7 +5,7 @@ module.exports = (app) => {
     add: addDoctor,
   } = require("./controllers/doctor.controller.js");
 
-  const { make } = require("./controllers/visit.controller.js");
+  const { make, all: allVisits } = require("./controllers/visit.controller.js");
 
   const auth = require("./middlewares/auth.js");
 
