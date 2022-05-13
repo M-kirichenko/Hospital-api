@@ -60,8 +60,8 @@ exports.deleteOne = async (req, res) => {
     const deleted = await Visit.destroy({
       where: { id, user_id: req.user.id },
     });
-    if (deleted) return res.send(await this.allVisits(req, res));
-    else res.status(404).send({ msg: `row with id: ${id} not found!` });
+    if (deleted) res.redirect("/api/hospital/visits");
+    else return res.status(404).send({ msg: `row with id: ${id} not found!` });
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }
