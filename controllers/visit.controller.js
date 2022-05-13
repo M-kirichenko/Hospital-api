@@ -63,10 +63,15 @@ exports.updateOne = async (req, res) => {
     return res.status(422).send({ msg: "Nothing to update" });
 
   try {
+    if (!moment(date, "DD.MM.YYYY").isValid())
+      return res.status(422).send({ msg: "Invalid Date" });
+
     body.date = moment.utc(date, "DD.MM.YYYY");
+
     const updated = await Visit.update(body, {
       where: { id, user_id: req.user.id },
     });
+
     if (updated) res.redirect("/api/hospital/visits");
     else return res.status(404).send({ msg: `row with id: ${id} not found!` });
   } catch (err) {
