@@ -1,6 +1,5 @@
 const bcrypt = require("bcrypt");
-const db = require("../models");
-const user = db.user;
+const { User } = require("../models");
 const {
   validEmail,
   validPassword,
@@ -27,14 +26,14 @@ exports.register = async (req, res) => {
   if (errors.length) return res.status(422).send({ msg: errors });
 
   try {
-    const found = await user.findOne({ where: { email } });
+    const found = await User.findOne({ where: { email } });
     if (found)
       return res
         .status(422)
         .send({ msg: "User with such email already exists" });
 
     body.password = bcrypt.hashSync(password, 10);
-    const created = await user.create(body);
+    const created = await User.create(body);
     if (created) {
       const { id, email } = created;
       const token = genToken({ id, email });
@@ -52,7 +51,7 @@ exports.login = async (req, res) => {
     return res.status(422).send({ msg: "All inputs required" });
 
   try {
-    const foundUser = await user.findOne({
+    const foundUser = await User.findOne({
       where: { email },
     });
 

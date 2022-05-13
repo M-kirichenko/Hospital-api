@@ -1,9 +1,8 @@
-const db = require("../models");
-const visit = db.visit;
+const { Visit } = require("../models");
 const { validName } = require("../helpers/validator");
 const moment = require("moment");
 
-exports.make = async (req, res) => {
+exports.createVisit = async (req, res) => {
   const { body } = req;
   const { text, date, doctor_id, patient_name } = body;
 
@@ -28,16 +27,16 @@ exports.make = async (req, res) => {
   try {
     body.date = moment.utc(date, "DD.MM.YYYY");
     body.user_id = req.user.id;
-    const created = await visit.create(body);
+    const created = await Visit.create(body);
     if (created) return res.send(created);
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }
 };
 
-exports.all = async (req, res) => {
+exports.allVisits = async (req, res) => {
   try {
-    const allVisits = await visit.findAll({ where: { user_id: req.user.id } });
+    const allVisits = await Visit.findAll({ where: { user_id: req.user.id } });
     return res.send(allVisits);
   } catch (err) {
     return res.status(422).send({ msg: err.message });
