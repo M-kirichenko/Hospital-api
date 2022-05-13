@@ -53,3 +53,23 @@ exports.getOne = async (req, res) => {
     return res.status(422).send({ msg: err.message });
   }
 };
+
+exports.updateOne = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+  const { text, patient_name, doctor_id, date } = body;
+
+  if (!text && !date && !doctor_id && !patient_name)
+    return res.status(422).send({ msg: "Nothing to update" });
+
+  try {
+    body.date = moment.utc(date, "DD.MM.YYYY");
+    const updated = await Visit.update(body, {
+      where: { id, user_id: req.user.id },
+    });
+    if (updated) res.redirect("/api/hospital/visits");
+    else return res.status(404).send({ msg: `row with id: ${id} not found!` });
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};

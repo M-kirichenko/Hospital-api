@@ -9,6 +9,7 @@ module.exports = (app) => {
     createVisit,
     allVisits,
     getOne,
+    updateOne,
   } = require("./controllers/visit.controller.js");
 
   const auth = require("./middlewares/auth.js");
@@ -21,7 +22,7 @@ module.exports = (app) => {
   router.route("/doctors").get(auth, getAllDoctors).post(auth, addDoctor);
 
   router.route("/visits").post(auth, createVisit).get(auth, allVisits);
-  router.route("/visits/:id").get(auth, getOne);
+  router.route("/visits/:id").get(auth, getOne).patch(auth, updateOne);
 
   app.use("/api/hospital", router);
 };
