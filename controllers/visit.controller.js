@@ -42,3 +42,14 @@ exports.allVisits = async (req, res) => {
     return res.status(422).send({ msg: err.message });
   }
 };
+
+exports.getOne = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const one = await Visit.findOne({ where: { id, user_id: req.user.id } });
+    if (one) return res.send(one);
+    else res.status(404).send({ msg: `row with id: ${id} not found!` });
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};
