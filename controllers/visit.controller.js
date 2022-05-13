@@ -53,3 +53,16 @@ exports.getOne = async (req, res) => {
     return res.status(422).send({ msg: err.message });
   }
 };
+
+exports.deleteOne = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleted = await Visit.destroy({
+      where: { id, user_id: req.user.id },
+    });
+    if (deleted) res.redirect("/api/hospital/visits");
+    else return res.status(404).send({ msg: `row with id: ${id} not found!` });
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};
