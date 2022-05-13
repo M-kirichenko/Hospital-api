@@ -1,6 +1,6 @@
-const { Visit } = require("../models");
-const { validName } = require("../helpers/validator");
 const moment = require("moment");
+const { Visit } = require("../models");
+const { validateVisitBody } = require("../helpers/commonFunc");
 
 exports.createVisit = async (req, res) => {
   const { body } = req;
@@ -9,23 +9,12 @@ exports.createVisit = async (req, res) => {
   if (!text || !date || !doctor_id || !patient_name)
     return res.status(422).send({ msg: "All visit info is required" });
 
-  const errors = [];
-
-  if (!text.length) {
-    errors.push("Visit text can't be empty");
-  }
-
-  if (!validName(patient_name))
-    errors.push(
-      "Patient name must be composed only of letters and be at least 3 letters long"
-    );
-
-  if (!moment(date, "DD.MM.YYYY").isValid()) errors.push("Invalid date");
+  body.date = moment.utc(date, "DD.MM.YYYY");
+  const errors = validateVisitBody(body);
 
   if (errors.length) return res.status(422).send({ msg: errors });
 
   try {
-    body.date = moment.utc(date, "DD.MM.YYYY");
     body.user_id = req.user.id;
     const created = await Visit.create(body);
     if (created) return res.send(created);
@@ -61,6 +50,32 @@ exports.deleteOne = async (req, res) => {
       where: { id, user_id: req.user.id },
     });
     if (deleted) res.redirect("/api/hospital/visits");
+    else return res.status(404).send({ msg: `row with id: ${id} not found!` });
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};
+
+exports.updateOne = async (req, res) => {
+  const { id } = req.params;
+  const { body } = req;
+  const { text, patient_name, doctor_id, date } = body;
+
+  if (!text && !date && !doctor_id && !patient_name)
+    return res.status(422).send({ msg: "Nothing to update" });
+
+  body.date = moment.utc(date, "DD.MM.YYYY");
+
+  const errors = validateVisitBody(body);
+
+  if (errors.length) return res.status(422).send({ msg: errors });
+
+  try {
+    const updated = await Visit.update(body, {
+      where: { id, user_id: req.user.id },
+    });
+
+    if (updated) res.redirect("/api/hospital/visits");
     else return res.status(404).send({ msg: `row with id: ${id} not found!` });
   } catch (err) {
     return res.status(422).send({ msg: err.message });
