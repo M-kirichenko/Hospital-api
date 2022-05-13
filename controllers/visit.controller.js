@@ -33,3 +33,12 @@ exports.createVisit = async (req, res) => {
     return res.status(422).send({ msg: err.message });
   }
 };
+
+exports.allVisits = async (req, res) => {
+  try {
+    const allVisits = await Visit.findAll({ where: { user_id: req.user.id } });
+    return res.send(allVisits);
+  } catch (err) {
+    return res.status(422).send({ msg: err.message });
+  }
+};

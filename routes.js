@@ -16,7 +16,7 @@ module.exports = (app) => {
 
   router.route("/doctors").get(auth, getAllDoctors).post(auth, addDoctor);
 
-  router.route("/visits").post(auth, createVisit);
+  router.route("/visits").post(auth, createVisit).get(auth, allVisits);
 
   app.use("/api/hospital", router);
 };
