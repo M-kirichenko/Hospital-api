@@ -5,7 +5,11 @@ module.exports = (app) => {
     addDoctor,
   } = require("./controllers/doctor.controller.js");
 
-  const { createVisit } = require("./controllers/visit.controller.js");
+  const {
+    createVisit,
+    allVisits,
+    getOne,
+  } = require("./controllers/visit.controller.js");
 
   const auth = require("./middlewares/auth.js");
 
@@ -17,6 +21,7 @@ module.exports = (app) => {
   router.route("/doctors").get(auth, getAllDoctors).post(auth, addDoctor);
 
   router.route("/visits").post(auth, createVisit).get(auth, allVisits);
+  router.route("/visits/:id").get(auth, getOne);
 
   app.use("/api/hospital", router);
 };
