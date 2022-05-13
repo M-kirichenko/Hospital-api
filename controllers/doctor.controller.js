@@ -1,5 +1,4 @@
-const db = require("../models");
-const { Doctor } = db;
+const { Doctor } = require("../models");
 
 exports.getAllDoctors = async (req, res) => {
   try {

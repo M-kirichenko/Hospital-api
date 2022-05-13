@@ -1,5 +1,4 @@
-const db = require("../models");
-const { Visit } = db;
+const { Visit } = require("../models");
 const { validName } = require("../helpers/validator");
 const moment = require("moment");
 
