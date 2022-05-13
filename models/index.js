@@ -11,15 +11,16 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     idle: dbConfig.pool.idle,
   },
 });
+
 const db = {};
 
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
-db.user = require("./user.model.js")(sequelize, Sequelize);
-db.doctor = require("./doctor.model.js")(sequelize, Sequelize);
-db.visit = require("./visit.model.js")(sequelize, Sequelize);
+db.User = require("./user.model.js")(sequelize, Sequelize);
+db.Doctor = require("./doctor.model.js")(sequelize, Sequelize);
+db.Visit = require("./visit.model.js")(sequelize, Sequelize);
 
-db.visit.belongsTo(db.user, {
+db.Visit.belongsTo(db.User, {
   foreignKey: "user_id",
 });
 

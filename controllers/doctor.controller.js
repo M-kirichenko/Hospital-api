@@ -1,16 +1,16 @@
 const db = require("../models");
-const { doctor } = db;
+const { Doctor } = db;
 
-exports.all = async (req, res) => {
+exports.getAllDoctors = async (req, res) => {
   try {
-    const all = await doctor.findAll();
+    const all = await Doctor.findAll();
     return res.send(all);
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }
 };
 
-exports.add = async (req, res) => {
+exports.addDoctor = async (req, res) => {
   const { body } = req;
   const { name, specialty } = req.body;
 
@@ -18,7 +18,7 @@ exports.add = async (req, res) => {
     return res.send({ msg: "Both name and specialty are required!" });
 
   try {
-    const created = await doctor.create(body);
+    const created = await Doctor.create(body);
     return res.send(created);
   } catch (err) {
     return res.status(422).send({ msg: err.message });

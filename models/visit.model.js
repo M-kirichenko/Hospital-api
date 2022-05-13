@@ -1,5 +1,5 @@
 module.exports = (sequelize, Datatypes) => {
-  const visit = sequelize.define(
+  const Visit = sequelize.define(
     "visits",
     {
       text: {
@@ -21,5 +21,5 @@ module.exports = (sequelize, Datatypes) => {
     { timestamps: false }
   );
 
-  return visit;
+  return Visit;
 };
