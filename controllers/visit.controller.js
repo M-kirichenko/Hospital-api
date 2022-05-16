@@ -64,11 +64,15 @@ exports.updateOne = async (req, res) => {
   if (!text && !date && !doctor_id && !patient_name)
     return res.status(422).send({ msg: "Nothing to update" });
 
-  body.date = moment.utc(date, "DD.MM.YYYY");
+  const errors = [];
 
-  const errors = validateVisitBody(body);
+  for (let key in body) {
+    if (!body[key]) errors.push(`${key} is empty`);
+  }
 
   if (errors.length) return res.status(422).send({ msg: errors });
+
+  body.date = moment.utc(date, "DD.MM.YYYY");
 
   try {
     const updated = await Visit.update(body, {
