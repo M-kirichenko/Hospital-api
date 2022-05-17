@@ -45,8 +45,7 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-  const { body } = req;
-  const { email, password } = body;
+  const { email, password } = req.body;
   if (!email || !password)
     return res.status(422).send({ msg: "All inputs required" });
 
@@ -63,7 +62,7 @@ exports.login = async (req, res) => {
         return res.send({ name, email, token });
       }
     }
-    return res.status(401).send({ msg: "Invalid Credentials" });
+    return res.status(404).send({ msg: "Invalid Credentials" });
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }

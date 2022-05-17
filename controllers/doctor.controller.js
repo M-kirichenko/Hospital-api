@@ -14,7 +14,9 @@ exports.addDoctor = async (req, res) => {
   const { name, specialty } = req.body;
 
   if (!name || !specialty)
-    return res.send({ msg: "Both name and specialty are required!" });
+    return res
+      .status(422)
+      .send({ msg: "Both name and specialty are required!" });
 
   try {
     const created = await Doctor.create(body);
