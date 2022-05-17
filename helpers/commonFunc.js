@@ -1,5 +1,8 @@
+const jwt = require("jsonwebtoken");
+const moment = require("moment");
+const { validName } = require("./validator");
+
 const genToken = (tokenParams) => {
-  const jwt = require("jsonwebtoken");
   const token = jwt.sign(tokenParams, process.env.TOKEN_KEY, {
     expiresIn: "2h",
   });
@@ -7,9 +10,6 @@ const genToken = (tokenParams) => {
 };
 
 const validateVisitBody = (body) => {
-  const moment = require("moment");
-  const { validName } = require("./validator");
-
   const errors = [];
   const { text, date, patient_name } = body;
 
