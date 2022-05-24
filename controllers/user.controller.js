@@ -62,7 +62,7 @@ exports.login = async (req, res) => {
         return res.send({ name, email, token });
       }
     }
-    return res.status(404).send({ msg: "Invalid Credentials" });
+    return res.status(401).send({ msg: "Invalid Credentials" });
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }
