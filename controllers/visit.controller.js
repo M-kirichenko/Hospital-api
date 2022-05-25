@@ -1,5 +1,5 @@
 const moment = require("moment");
-const { Visit } = require("../models");
+const { Visit, Doctor } = require("../models");
 const { validateVisitBody } = require("../helpers/commonFunc");
 
 exports.createVisit = async (req, res) => {
@@ -25,7 +25,10 @@ exports.createVisit = async (req, res) => {
 
 exports.allVisits = async (req, res) => {
   try {
-    const allVisits = await Visit.findAll({ where: { user_id: req.user.id } });
+    const allVisits = await Visit.findAll({
+      where: { user_id: req.user.id },
+      include: Doctor,
+    });
     return res.send(allVisits);
   } catch (err) {
     return res.status(422).send({ msg: err.message });
