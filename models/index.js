@@ -20,6 +20,6 @@ db.User = require("./user.model.js")(sequelize, Sequelize);
 db.Doctor = require("./doctor.model.js")(sequelize, Sequelize);
 db.Visit = require("./visit.model.js")(sequelize, Sequelize);
 
-db.Visit.hasOne(db.Doctor, { foreignKey: "id" });
+db.Visit.belongsTo(db.Doctor, { foreignKey: "doctor_id" });
 
 module.exports = db;
