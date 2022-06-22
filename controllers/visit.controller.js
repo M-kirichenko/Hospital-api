@@ -9,7 +9,7 @@ exports.createVisit = async (req, res) => {
   if (!text || !date || !doctor_id || !patient_name)
     return res.status(422).send({ msg: "All visit info is required" });
 
-  body.date = moment.utc(date, "DD.MM.YYYY");
+  // body.date = moment.utc(date, "DD.MM.YYYY");
   const errors = validateVisitBody(body);
 
   if (errors.length) return res.status(422).send({ msg: errors });
@@ -17,7 +17,7 @@ exports.createVisit = async (req, res) => {
   try {
     body.user_id = req.user.id;
     const created = await Visit.create(body);
-    if (created) return res.send(created);
+    if (created) return res.send(await this.allVisits(req, res));
   } catch (err) {
     return res.status(422).send({ msg: err.message });
   }
@@ -52,7 +52,7 @@ exports.deleteOne = async (req, res) => {
     const deleted = await Visit.destroy({
       where: { id, user_id: req.user.id },
     });
-    if (deleted) res.redirect("/api/hospital/visits");
+    if (deleted) return res.send(await this.allVisits(req, res));
     else return res.status(404).send({ msg: `row with id: ${id} not found!` });
   } catch (err) {
     return res.status(422).send({ msg: err.message });
